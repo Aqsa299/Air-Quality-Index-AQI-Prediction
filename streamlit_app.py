@@ -53,9 +53,21 @@ try:
 
     # Historical AQI Trends
     try:
-        # Plot historical AQI data
+        # Plot historical AQI data with single line, minimal markers, and cleaner styling
         fig = px.line(df, x="date", y="main_aqi", title="Historical AQI Trends", labels={"main_aqi": "AQI", "date": "Date"})
-        fig.update_layout(showlegend=False)
+        
+        # Clean styling options
+        fig.update_traces(line=dict(color='blue', width=3), marker=dict(size=4, color='blue', opacity=0.7))
+        fig.update_layout(
+            title="Historical AQI Trends", 
+            title_x=0.5, 
+            xaxis_title="Date", 
+            yaxis_title="AQI", 
+            plot_bgcolor="white", 
+            showlegend=False,
+            xaxis=dict(showgrid=False),
+            yaxis=dict(showgrid=False)
+        )
         st.plotly_chart(fig)
 
     except Exception as e:
@@ -97,7 +109,7 @@ try:
         latest_features = pd.DataFrame([latest_data])  # Use your fetched `latest_data`
 
         # Remove `main_aqi` and `date` from input data to match model's features
-        latest_features = latest_features.drop(columns=["main_aqi", "date"])
+        latest_features = latest_features.drop(columns=["main_aqi", "date", "day_of_year"])
 
         # Replicate the latest features for the next 3 days
         input_data = pd.concat([latest_features] * 3, ignore_index=True)
@@ -128,10 +140,21 @@ try:
             "Level": ["High" if p > 4 else "Moderate" if p >= 3 else "Good" for p in predictions]
         })
 
-        # Plot AQI predictions
+        # Plot AQI predictions with clean, single-lined style
         fig_pred = px.line(prediction_df, x="Date", y="Predicted AQI", title="Predicted AQI for the Next 3 Days", markers=True, labels={"Predicted AQI": "AQI"})
-        fig_pred.update_traces(line_color="blue")
-        fig_pred.update_layout(showlegend=False)
+        
+        # Clean styling options
+        fig_pred.update_traces(line=dict(color='green', width=3), marker=dict(size=4, color='green', opacity=0.7))
+        fig_pred.update_layout(
+            title="Predicted AQI for the Next 3 Days", 
+            title_x=0.5, 
+            xaxis_title="Date", 
+            yaxis_title="AQI", 
+            plot_bgcolor="white", 
+            showlegend=False,
+            xaxis=dict(showgrid=False),
+            yaxis=dict(showgrid=False)
+        )
         st.plotly_chart(fig_pred)
 
     except Exception as e:
