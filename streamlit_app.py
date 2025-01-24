@@ -52,30 +52,23 @@ try:
     st.write("Welcome to the AQI Prediction App!")
 
     # Historical AQI Trends
-try:
-    # Plot historical AQI data with a single, smooth line and no markers
-    fig = px.line(df, x="date", y="main_aqi", title="Historical AQI Trends", labels={"main_aqi": "AQI", "date": "Date"})
-
-    # Clean styling options for the historical plot
-    fig.update_traces(line=dict(color='blue', width=3))  # Single blue line, no markers
-    fig.update_layout(
-        title="Historical AQI Trends", 
-        title_x=0.5, 
-        xaxis_title="Date", 
-        yaxis_title="AQI", 
-        plot_bgcolor="white", 
-        showlegend=False,
-        xaxis=dict(showgrid=False, ticks=""),
-        yaxis=dict(showgrid=False, ticks=""),
-        margin=dict(l=50, r=50, t=50, b=50)  # Adjust margins for cleaner space
-    )
-    
-    # Display the graph
-    st.plotly_chart(fig)
-
-except Exception as e:
-    st.error("Error displaying historical AQI trends.")
-    st.write(e)
+    try:
+        # Plot historical AQI data with single line, minimal markers, and cleaner styling
+        fig = px.line(df, x="date", y="main_aqi", title="Historical AQI Trends", labels={"main_aqi": "AQI", "date": "Date"})
+        
+        # Clean styling options for the historical plot
+        fig.update_traces(line=dict(color='blue', width=3), marker=dict(size=4, color='blue', opacity=0.7))
+        fig.update_layout(
+            title="Historical AQI Trends", 
+            title_x=0.5, 
+            xaxis_title="Date", 
+            yaxis_title="AQI", 
+            plot_bgcolor="white", 
+            showlegend=False,
+            xaxis=dict(showgrid=False),
+            yaxis=dict(showgrid=False)
+        )
+        st.plotly_chart(fig)
 
     except Exception as e:
         st.error("Error displaying historical AQI trends.")
@@ -173,4 +166,4 @@ except Exception as e:
     st.write(e)
 
 # Footer
-st.write("Data provided by OpenMeteo and OpenWeather APIs. Powered by Hopsworks.")
+st.write("Data provided by OpenMeteo and OpenWeather APIs. Powered by Hops
