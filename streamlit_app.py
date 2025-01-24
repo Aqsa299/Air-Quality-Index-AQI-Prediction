@@ -40,6 +40,13 @@ try:
     if 'date' not in df.columns:
         df['date'] = pd.to_datetime(df[['year', 'month', 'day']])
 
+    # Extract date-related features
+    df['day_of_year'] = df['date'].dt.dayofyear
+    df['month'] = df['date'].dt.month
+    df['day'] = df['date'].dt.day
+    df['day_of_week'] = df['date'].dt.dayofweek
+    df['is_weekend'] = df['day_of_week'].isin([5, 6]).astype(int)
+
     # Streamlit app title and description
     st.title("Air Quality Index Prediction")
     st.write("Welcome to the AQI Prediction App!")
@@ -89,8 +96,8 @@ try:
         # Fetch the most recent data from the feature store to use as input
         latest_features = pd.DataFrame([latest_data])  # Use your fetched `latest_data`
 
-        # Remove `main_aqi` from input data to match model's features
-        latest_features = latest_features.drop(columns=["main_aqi"])
+        # Remove `main_aqi` and `date` from input data to match model's features
+        latest_features = latest_features.drop(columns=["main_aqi", "date"])
 
         # Replicate the latest features for the next 3 days
         input_data = pd.concat([latest_features] * 3, ignore_index=True)
