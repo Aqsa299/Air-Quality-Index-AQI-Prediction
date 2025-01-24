@@ -56,7 +56,7 @@ try:
         # Plot historical AQI data with single line, minimal markers, and cleaner styling
         fig = px.line(df, x="date", y="main_aqi", title="Historical AQI Trends", labels={"main_aqi": "AQI", "date": "Date"})
         
-        # Clean styling options
+        # Clean styling options for the historical plot
         fig.update_traces(line=dict(color='blue', width=3), marker=dict(size=4, color='blue', opacity=0.7))
         fig.update_layout(
             title="Historical AQI Trends", 
@@ -143,8 +143,8 @@ try:
         # Plot AQI predictions with clean, single-lined style
         fig_pred = px.line(prediction_df, x="Date", y="Predicted AQI", title="Predicted AQI for the Next 3 Days", markers=True, labels={"Predicted AQI": "AQI"})
         
-        # Clean styling options
-        fig_pred.update_traces(line=dict(color='green', width=3), marker=dict(size=4, color='green', opacity=0.7))
+        # Clean styling options for the prediction plot
+        fig_pred.update_traces(line=dict(color='green', width=3), marker=dict(size=6, color='green', opacity=0.7))
         fig_pred.update_layout(
             title="Predicted AQI for the Next 3 Days", 
             title_x=0.5, 
