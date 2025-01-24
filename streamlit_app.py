@@ -21,7 +21,7 @@ def get_data():
     # Login to Hopsworks
     project = hopsworks.login(
         project="MyAQI_Predictor",  # Replace with your Hopsworks project name
-        api_key_value="ir5PKrvMxVGQtr4I.OJAzB9b685t2LvfMHguGosCsipkeOyV0XSRsiz5ia81FyxNkSlgHW5eGY6b3W99O",  # Replace with your API key
+        os.environ[api_key_value]="ir5PKrvMxVGQtr4I.OJAzB9b685t2LvfMHguGosCsipkeOyV0XSRsiz5ia81FyxNkSlgHW5eGY6b3W99O",  # Replace with your API key
     )
     fs = project.get_feature_store()
 
