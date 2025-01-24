@@ -36,6 +36,10 @@ try:
     # Fetch data and project from Hopsworks
     df, project = get_data()
 
+    # Ensure the 'date' column exists, create it if necessary
+    if 'date' not in df.columns:
+        df['date'] = pd.to_datetime(df[['year', 'month', 'day']])
+
     # Streamlit app title and description
     st.title("Air Quality Index Prediction")
     st.write("Welcome to the AQI Prediction App!")
@@ -74,9 +78,9 @@ try:
     # Load the model from the Hopsworks Model Registry
     try:
         mr = project.get_model_registry()
-        model = mr.get_model("air_quality_prediction_model", version=1)
+        model = mr.get_model("air_quality_prediction_model", version=1)  # Replace with your model name/version
         model_dir = model.download()
-        rfg_model = joblib.load(f"{model_dir}/model.pkl")
+        rfg_model = joblib.load(f"{model_dir}/model.pkl")  # Adjust path if needed
 
         # Generate predictions for the next 3 days
         today = datetime.datetime.now()
@@ -93,8 +97,8 @@ try:
 
         # Adjust specific features for each day (e.g., incrementing dates)
         for i in range(3):
-            input_data.loc[i, "day"] = (latest_data["day"] + i) % 31 or 31
-            input_data.loc[i, "day_of_week"] = (latest_data["day_of_week"] + i) % 7
+            input_data.loc[i, "day"] = (latest_data["day"] + i + 1) % 31 or 31
+            input_data.loc[i, "day_of_week"] = (latest_data["day_of_week"] + i + 1) % 7
             input_data.loc[i, "is_weekend"] = 1 if input_data.loc[i, "day_of_week"] in [5, 6] else 0
             input_data.loc[i, "aqi_lag_1"] = latest_data["main_aqi"]  # Use today's AQI as lag for Day 1
             input_data.loc[i, "aqi_lag_2"] = input_data.loc[i, "aqi_lag_1"]  # Propagate for Day 2
