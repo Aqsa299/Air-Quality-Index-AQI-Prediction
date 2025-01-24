@@ -166,4 +166,4 @@ except Exception as e:
     st.write(e)
 
 # Footer
-st.write("Data provided by OpenMeteo and OpenWeather APIs. Powered by Hops
+st.write("Data provided by OpenMeteo and OpenWeather APIs. Powered by Hopsworks")
