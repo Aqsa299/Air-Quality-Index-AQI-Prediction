@@ -18,26 +18,18 @@ from urllib.error import URLError
 # Cache data fetching to optimize app performance
 @st.cache_data
 def get_data():
-    # Set the Hopsworks API key from environment variable
-    api_key = os.getenv("HOPSWORKS_API_KEY")  # Ensure the API key is set as an environment variable
-    if not api_key:
-        raise ValueError("HOPSWORKS_API_KEY is not set in the environment variables.")
-    
-    os.environ["HOPSWORKS_API_KEY"] = api_key
+    # Set the Hopsworks API key
+    os.environ["HOPSWORKS_API_KEY"] = "ir5PKrvMxVGQtr4I.OJAzB9b685t2LvfMHguGosCsipkeOyV0XSRsiz5ia81FyxNkSlgHW5eGY6b3W99O"  # Replace with your API key
 
     # Login to Hopsworks
     project = hopsworks.login(project="MyAQI_Predictor")
     fs = project.get_feature_store()
 
     # Get the Feature Group for your AQI predictions
-    fg = fs.get_feature_group("aqi_featuregroup", version=2)
+    fg = fs.get_feature_group("aqi_featuregroup", version=2)  # Replace with your feature group name/version
     df = fg.read(online=True)
-
-    # Construct 'date' column if missing
-    if "date" not in df.columns:
-        df["date"] = pd.to_datetime(df[["year", "month", "day"]])
-
     return df, project
+
 
 # Streamlit app logic
 try:
