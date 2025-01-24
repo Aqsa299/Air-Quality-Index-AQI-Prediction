@@ -1,0 +1,6 @@
+hopsworks[python]
+streamlit
+pandas
+plotly
+scikit-learn
+xgboost
