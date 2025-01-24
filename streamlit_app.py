@@ -18,16 +18,25 @@ from urllib.error import URLError
 # Cache data fetching to optimize app performance
 @st.cache_data
 def get_data():
-    # Set the Hopsworks API key
-    os.environ["HOPSWORKS_API_KEY"] = "ir5PKrvMxVGQtr4I.OJAzB9b685t2LvfMHguGosCsipkeOyV0XSRsiz5ia81FyxNkSlgHW5eGY6b3W99O"  # Replace with your API key
+    # Set the Hopsworks API key from environment variable
+    api_key = os.getenv("HOPSWORKS_API_KEY")  # Ensure the API key is set as an environment variable
+    if not api_key:
+        raise ValueError("HOPSWORKS_API_KEY is not set in the environment variables.")
+    
+    os.environ["HOPSWORKS_API_KEY"] = api_key
 
     # Login to Hopsworks
     project = hopsworks.login(project="MyAQI_Predictor")
     fs = project.get_feature_store()
 
     # Get the Feature Group for your AQI predictions
-    fg = fs.get_feature_group("aqi_featuregroup", version=2)  # Replace with your feature group name/version
+    fg = fs.get_feature_group("aqi_featuregroup", version=2)
     df = fg.read(online=True)
+
+    # Construct 'date' column if missing
+    if "date" not in df.columns:
+        df["date"] = pd.to_datetime(df[["year", "month", "day"]])
+
     return df, project
 
 # Streamlit app logic
@@ -73,9 +82,9 @@ try:
     # Load the model from the Hopsworks Model Registry
     try:
         mr = project.get_model_registry()
-        model = mr.get_model("air_quality_prediction_model", version=1)  # Replace with your model name/version
+        model = mr.get_model("air_quality_prediction_model", version=1)
         model_dir = model.download()
-        rfg_model = joblib.load(f"{model_dir}/model.pkl")  # Adjust path if needed
+        rfg_model = joblib.load(f"{model_dir}/model.pkl")
 
         # Generate predictions for the next 3 days
         today = datetime.datetime.now()
@@ -92,8 +101,8 @@ try:
 
         # Adjust specific features for each day (e.g., incrementing dates)
         for i in range(3):
-            input_data.loc[i, "day"] = (latest_data["day"] + i + 1) % 31 or 31
-            input_data.loc[i, "day_of_week"] = (latest_data["day_of_week"] + i + 1) % 7
+            input_data.loc[i, "day"] = (latest_data["day"] + i) % 31 or 31
+            input_data.loc[i, "day_of_week"] = (latest_data["day_of_week"] + i) % 7
             input_data.loc[i, "is_weekend"] = 1 if input_data.loc[i, "day_of_week"] in [5, 6] else 0
             input_data.loc[i, "aqi_lag_1"] = latest_data["main_aqi"]  # Use today's AQI as lag for Day 1
             input_data.loc[i, "aqi_lag_2"] = input_data.loc[i, "aqi_lag_1"]  # Propagate for Day 2
@@ -132,4 +141,3 @@ except Exception as e:
 
 # Footer
 st.write("Data provided by OpenMeteo and OpenWeather APIs. Powered by Hopsworks.")
-
