@@ -55,8 +55,8 @@ try:
     try:
         # Resample data (e.g., weekly averages) for large datasets
         df.set_index('date', inplace=True)  # Set 'date' as the index for resampling
-        resampled_df = df.resample('W').mean().reset_index()  # Weekly resampling
-
+        resampled_df = df.copy().set_index('date').resample('W').mean().reset_index()
+ # Weekly resampling
         # Plot the cleaned historical AQI data
         fig = px.line(
             resampled_df,
