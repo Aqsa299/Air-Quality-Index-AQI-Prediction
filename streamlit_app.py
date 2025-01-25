@@ -51,37 +51,57 @@ try:
     st.title("Air Quality Index Prediction")
     st.write("Welcome to the AQI Prediction App!")
 
-    # Historical AQI Trends
-    try:
-        # Plot historical AQI data with single line, minimal markers, and cleaner styling
-        fig = px.line(df, 
-                      x="date", 
-                      y="main_aqi", 
-                      title="Historical AQI Trends", 
-                      labels={"main_aqi": "AQI", "date": "Date"}
-                     )
-        
-        # Clean styling options for the historical plot
-        fig.update_traces(
-            line=dict(color='blue', width=3), 
-            marker=dict(size=0)
-        )
-        fig.update_layout(
-            title="Historical AQI Trends", 
-            title_x=0.5, 
-            xaxis_title="Date", 
-            yaxis_title="AQI", 
-            plot_bgcolor="white", 
-            showlegend=False,
-            xaxis=dict(showgrid=False, ticks="outside", ticklen=5),
-            yaxis=dict(showgrid=False, ticks="outside", ticklen=5),
-            margin=dict(l=40, r=40, t=40, b=40)
-        )
-        st.plotly_chart(fig)
+   # Historical AQI Trends (Daily)
+try:
+    # Ensure 'date' column is in datetime format
+    df['date'] = pd.to_datetime(df['date'])
 
-    except Exception as e:
-        st.error("Error displaying historical AQI trends.")
-        st.write(e)
+    # Plot the daily AQI data
+    fig = px.line(
+        df,
+        x="date",
+        y="main_aqi",
+        title="Historical AQI Trends (Daily)",
+        labels={"main_aqi": "AQI", "date": "Date"},
+    )
+
+    # Add reference lines for AQI levels
+    fig.add_hline(y=50, line_dash="dot", line_color="green", annotation_text="Good (0-50)", annotation_position="top left")
+    fig.add_hline(y=100, line_dash="dot", line_color="orange", annotation_text="Moderate (51-100)", annotation_position="top left")
+    fig.add_hline(y=150, line_dash="dot", line_color="red", annotation_text="Unhealthy (101-150)", annotation_position="top left")
+
+    # Update chart appearance for a clean look
+    fig.update_traces(
+        line=dict(color='blue', width=2),
+        marker=dict(size=0)  # No markers for a cleaner line
+    )
+    fig.update_layout(
+        title_x=0.5,
+        xaxis_title="Date",
+        yaxis_title="AQI",
+        plot_bgcolor="white",
+        showlegend=False,
+        xaxis=dict(
+            showgrid=False,
+            ticks="outside",
+            ticklen=5,
+            tickformat="%b %d, %Y",  # Show full date in readable format
+        ),
+        yaxis=dict(
+            showgrid=True,
+            gridcolor="lightgray",
+            ticks="outside",
+            ticklen=5,
+        ),
+        margin=dict(l=40, r=40, t=40, b=40),  # Adjust margins for balance
+    )
+
+    # Display the cleaned daily trend chart
+    st.plotly_chart(fig)
+
+except Exception as e:
+    st.error("Error displaying historical AQI trends.")
+    st.write(e)
 
     # Load the current AQI data from the feature store
     try:
