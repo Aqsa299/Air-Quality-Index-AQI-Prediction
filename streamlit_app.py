@@ -63,9 +63,9 @@ try:
         fig = px.line(
             resampled_df,
             x="date",
-            y="aqi",
+            y="main_aqi",
             title="Historical AQI Trends",
-            labels={"aqi": "AQI", "date": "Date"}
+            labels={"main_aqi": "AQI", "date": "Date"}
         )
 
         # Clean styling options for the historical plot
