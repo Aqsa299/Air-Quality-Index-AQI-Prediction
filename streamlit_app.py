@@ -53,21 +53,38 @@ try:
 
     # Historical AQI Trends
     try:
-        # Plot historical AQI data with single line, minimal markers, and cleaner styling
-        fig = px.line(df, x="date", y="main_aqi", title="Historical AQI Trends", labels={"main_aqi": "AQI", "date": "Date"})
-        
-        # Clean styling options for the historical plot
-        fig.update_traces(line=dict(color='blue', width=3), marker=dict(size=4, color='blue', opacity=0.7))
-        fig.update_layout(
-            title="Historical AQI Trends", 
-            title_x=0.5, 
-            xaxis_title="Date", 
-            yaxis_title="AQI", 
-            plot_bgcolor="white", 
-            showlegend=False,
-            xaxis=dict(showgrid=False),
-            yaxis=dict(showgrid=False)
+        # Apply a rolling mean to smooth the data
+        df['smoothed_aqi'] = df['main_aqi'].rolling(window=7, min_periods=1).mean()  # Weekly rolling mean
+
+        # Resample data (e.g., weekly averages) for large datasets
+        resampled_df = df.resample('W', on='date').mean().reset_index()  # Weekly resampling
+
+        # Plot the cleaned and smoothed historical AQI data
+        fig = px.line(
+            resampled_df,
+            x="date",
+            y="smoothed_aqi",
+            title="Historical AQI Trends (Smoothed)",
+            labels={"smoothed_aqi": "Smoothed AQI", "date": "Date"}
         )
+
+        # Clean styling options for the historical plot
+        fig.update_traces(
+            line=dict(color='blue', width=3),  # Single blue line
+            marker=dict(size=0)  # No markers for clarity
+        )
+        fig.update_layout(
+            title_x=0.5,
+            xaxis_title="Date",
+            yaxis_title="Smoothed AQI",
+            plot_bgcolor="white",
+            showlegend=False,
+            xaxis=dict(showgrid=False, ticks="outside", ticklen=5),
+            yaxis=dict(showgrid=False, ticks="outside", ticklen=5),
+            margin=dict(l=40, r=40, t=40, b=40)  # Tighter margins
+        )
+
+        # Display the cleaned and smoothed graph
         st.plotly_chart(fig)
 
     except Exception as e:
