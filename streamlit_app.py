@@ -51,47 +51,28 @@ try:
     st.title("Air Quality Index Prediction")
     st.write("Welcome to the AQI Prediction App!")
 
- # Historical AQI Trends
+    # Historical AQI Trends
     try:
-        # Resample data (e.g., weekly averages) for large datasets
-        df.set_index('date', inplace=True)  # Set 'date' as the index for resampling
-        resampled_df = df.copy().set_index('date').resample('W').mean().reset_index()
- # Weekly resampling
-        # Plot the cleaned historical AQI data
-        fig = px.line(
-            resampled_df,
-            x="date",
-            y="main_aqi",  # Use the raw 'main_aqi' for visualization
-            title="Historical AQI Trends",
-            labels={"main_aqi": "AQI", "date": "Date"}
-        )
-
+        # Plot historical AQI data with single line, minimal markers, and cleaner styling
+        fig = px.line(df, x="date", y="main_aqi", title="Historical AQI Trends", labels={"main_aqi": "AQI", "date": "Date"})
+        
         # Clean styling options for the historical plot
-        fig.update_traces(
-            line=dict(color='blue', width=3),  # Single blue line
-            marker=dict(size=0)  # No markers for clarity
-        )
+        fig.update_traces(line=dict(color='blue', width=3), marker=dict(size=0))
         fig.update_layout(
-            title_x=0.5,
-            xaxis_title="Date",
-            yaxis_title="AQI",
-            plot_bgcolor="white",
+            title="Historical AQI Trends", 
+            title_x=0.5, 
+            xaxis_title="Date", 
+            yaxis_title="AQI", 
+            plot_bgcolor="white", 
             showlegend=False,
-            xaxis=dict(showgrid=False, ticks="outside", ticklen=5),
-            yaxis=dict(showgrid=False, ticks="outside", ticklen=5),
-            margin=dict(l=40, r=40, t=40, b=40)  # Tighter margins
+            xaxis=dict(showgrid=False),
+            yaxis=dict(showgrid=False)
         )
-
-        # Display the cleaned graph
         st.plotly_chart(fig)
 
     except Exception as e:
         st.error("Error displaying historical AQI trends.")
         st.write(e)
-
-except Exception as e:
-    st.error("Error loading model or generating predictions. Check your model setup.")
-    st.write(e)
 
     # Load the current AQI data from the feature store
     try:
