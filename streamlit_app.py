@@ -54,10 +54,18 @@ try:
     # Historical AQI Trends
     try:
         # Plot historical AQI data with single line, minimal markers, and cleaner styling
-        fig = px.line(df, x="date", y="main_aqi", title="Historical AQI Trends", labels={"main_aqi": "AQI", "date": "Date"})
+        fig = px.line(df, 
+                      x="date", 
+                      y="main_aqi", 
+                      title="Historical AQI Trends", 
+                      labels={"main_aqi": "AQI", "date": "Date"}
+                     )
         
         # Clean styling options for the historical plot
-        fig.update_traces(line=dict(color='blue', width=3), marker=dict(size=0))
+        fig.update_traces(
+            line=dict(color='blue', width=3), 
+            marker=dict(size=0)
+        )
         fig.update_layout(
             title="Historical AQI Trends", 
             title_x=0.5, 
@@ -65,8 +73,9 @@ try:
             yaxis_title="AQI", 
             plot_bgcolor="white", 
             showlegend=False,
-            xaxis=dict(showgrid=False),
-            yaxis=dict(showgrid=False)
+            xaxis=dict(showgrid=False, ticks="outside", ticklen=5),
+            yaxis=dict(showgrid=False, ticks="outside", ticklen=5),
+            margin=dict(l=40, r=40, t=40, b=40)
         )
         st.plotly_chart(fig)
 
